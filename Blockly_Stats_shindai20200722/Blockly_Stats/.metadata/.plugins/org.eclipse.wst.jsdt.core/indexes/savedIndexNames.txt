@@ -1,0 +1,8 @@
+INDEX VERSION 1.4+C:\Users\kttk0\Desktop\colledge\kayama\Blockly_Stats_shindai20200603\Blockly_Stats_shindai20200603\Blockly_Stats\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2455165582.index
+2277053014.index
+2653497845.index
+2657966128.index
+2715988676.index
+3018240475.index
+3438914925.index

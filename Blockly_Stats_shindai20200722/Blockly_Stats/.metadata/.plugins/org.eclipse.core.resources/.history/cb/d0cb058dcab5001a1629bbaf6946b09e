@@ -1,0 +1,263 @@
+'use strict';
+goog.provide('Blockly.JavaScript.logic');
+goog.require('Blockly.JavaScript');
+
+
+Blockly.JavaScript['graph_set'] = function (block)
+{
+  var dropdown_graphtype = block.getFieldValue('graphType');
+  var value_x_input = Blockly.JavaScript.valueToCode(block, 'x_input', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y_input = Blockly.JavaScript.valueToCode(block, 'y_input', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var str = '';
+  var trace1 = {};
+  console.log("-----------------");
+  console.log(data_r[0]);
+  console.log(data_r[1]);
+
+  //value_x_input から datas[i][j] の文字列を生成
+
+  var x_val = value_x_input.slice(1,-1);
+  x_val = x_val.split(',');
+  var data_x = makeDatas(value_x_input);
+  var y_val = value_y_input.slice(1,-1);
+  y_val = y_val.split(',');
+  var data_y = makeDatas(value_y_input);
+
+
+  if (dropdown_graphtype === 'graph_line') {
+    str = "trace1 = {x: " + data_x + ", y: " + data_y +
+      ",\ntype: 'scatter', mode: 'markers + lines'};\n" +
+      "plotDatas.push(trace1);";
+
+  } else if (dropdown_graphtype === 'graph_scatter') {
+    console.log('scatter');
+    str = "trace1 = {x: " + data_x + ", y: " + data_y +
+    ",\ntype: 'scatter', mode: 'markers'};\n" +
+    "plotDatas.push(trace1);";
+  } else if (dropdown_graphtype === 'graph_bar') {
+    str = "trace1 = {x: " + data_x + ", y: " + data_y +
+      ",\ntype: 'bar'};\n" +
+      "plotDatas.push(trace1);";
+
+  } else if (dropdown_graphtype === 'graph_hist') {
+    str = "trace1 = {xbins:{start:120,size:5,end:170}" + ", x: " + data_y +
+      ",\ntype: 'histogram'};\n" +
+      "plotDatas.push(trace1);";
+
+  } else if (dropdown_graphtype === 'graph_circle') {
+    str = "trace1 = {labels: " + data_x + ", values: " + data_y +
+      ",\ntype: 'pie'};\n" +
+      "plotDatas.push(trace1);";
+  }
+
+  else if (dropdown_graphtype === 'graph_box') {
+    str = "trace1 = {y : "+ data_y +
+      ",\ntype: 'box'};\n" +
+      "plotDatas.push(trace1);";
+  }
+  //  str = str +  "data_plotly.push(trace1);";
+  //str = str + "Plotly.newPlot('graph', [trace1], layout);";
+  //  Plotly.newPlot('graph', data, layout);
+
+  str += '\nlayout.xaxis.title = labels[' + x_val[0] + '][' + x_val[1] + ']';
+  str += '\nlayout.yaxis.title = labels[' + y_val[0] + '][' + y_val[1] + ']';
+  str += '\nlayout.title = titles[' + x_val[0] + ']';
+  var code = str + '\n';
+  return code;
+};
+
+/*Blockly.JavaScript['graph_set'] = function (block)
+{
+  var dropdown_graphtype = block.getFieldValue('graphType');
+  var value_x_input = Blockly.JavaScript.valueToCode(block, 'x_input', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y_input = Blockly.JavaScript.valueToCode(block, 'y_input', Blockly.JavaScript.ORDER_ATOMIC);
+  console.log(value_x_input.split('['));
+  // TODO: Assemble JavaScript into code variable.
+  var str = '';
+  var trace1 = {};
+  console.log("-----------------");
+  console.log(data_r[0]);
+  console.log(data_r[1]);
+  if (dropdown_graphtype === 'graph_line') {
+    str = "trace1 = {x: " + value_x_input + ", y: " + value_y_input +
+      ",\ntype: 'scatter', mode: 'markers + lines'};\n" +
+      "plotDatas.push(trace1);";
+
+  } else if (dropdown_graphtype === 'graph_scatter') {
+    console.log('scatter');
+    str = "trace1 = {x: " + value_x_input + ", y: " + value_y_input +
+    ",\ntype: 'scatter', mode: 'markers'};\n" +
+    "plotDatas.push(trace1);";
+  } else if (dropdown_graphtype === 'graph_bar') {
+    str = "trace1 = {x: " + value_x_input + ", y: " + value_y_input +
+      ",\ntype: 'bar'};\n" +
+      "plotDatas.push(trace1);";
+
+  } else if (dropdown_graphtype === 'graph_hist') {
+    str = "trace1 = {xbins:{start:120,size:5,end:170}" + ", x: " + value_y_input +
+      ",\ntype: 'histogram'};\n" +
+      "plotDatas.push(trace1);";
+
+  } else if (dropdown_graphtype === 'graph_circle') {
+    str = "trace1 = {labels: " + value_x_input + ", values: " + value_y_input +
+      ",\ntype: 'pie'};\n" +
+      "plotDatas.push(trace1);";
+  }
+
+  else if (dropdown_graphtype === 'graph_box') {
+    str = "trace1 = {y : "+ value_y_input +
+      ",\ntype: 'box'};\n" +
+      "plotDatas.push(trace1);";
+  }
+  //  str = str +  "data_plotly.push(trace1);";
+  //str = str + "Plotly.newPlot('graph', [trace1], layout);";
+  //  Plotly.newPlot('graph', data, layout);
+  var code = str + '\n';
+  return code;
+};*/
+
+
+Blockly.JavaScript['histogram'] = function(block) {
+  var value_hist_data = Blockly.JavaScript.valueToCode(block, 'hist_data', Blockly.JavaScript.ORDER_ATOMIC);
+  var number_hist_class = block.getFieldValue('hist_class');
+  //下限上限
+  var value_hist_low = Blockly.JavaScript.valueToCode(block, 'hist_low', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_hist_high = Blockly.JavaScript.valueToCode(block, 'hist_high', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+
+    //value_x_input から datas[i][j] の文字列を生成
+  var hist_val = value_hist_data.slice(1,-1);
+  hist_val = hist_val.split(',');
+  var data_hist = "datas_extracted[" + hist_val[0] + "][" + hist_val[1] + "]";
+
+  var x_range_bool = new Boolean();
+  ( value_hist_low!=null && value_hist_high!=null ) ? x_range_bool = false : x_range_bool = true;
+
+
+  /*var str = "trace1 = {marker:{line:{width:1}}, xbins:{start:0,size:"+ number_hist_class +",end:200}" + ", x: " + data_hist +
+      ",\ntype: 'histogram'};\n" +
+      "plotDatas.push(trace1);";*/
+  /*var str = "trace1 = {marker:{line:{width:1}}, xbins:{start:"+ number_hist_low +",size:"+ number_hist_class +",end:"+ number_hist_high +"}"
+      +", xaxis:{range:[" + number_hist_low + "," + number_hist_high + "]}" + ", x: "+ data_hist + ",\ntype: 'histogram'};\n" +
+      "plotDatas.push(trace1);";*/
+
+
+
+  var str = "trace1 = {marker:{line:{width:1}}, xbins:{start:130,size:"+ number_hist_class +",end:170}"
+  //+", xaxis:{range:[" + number_hist_low + "," + number_hist_high + "]}"
+  //+", xaxis:{title:123}"
+  + ", x: "+ data_hist + ",\ntype: 'histogram'};\n" +
+  "plotDatas.push(trace1);";
+
+
+/*
+  var str = '\nlayout.xaxis.autorange = false;\n';
+  str += "trace1 = {marker:{line:{width:1}}, xbins:{start:130,size:"+ number_hist_class +",end:170}"
+  //+", xaxis:{range:[" + number_hist_low + "," + number_hist_high + "]}"
+  //+", xaxis:{title:123}"
+  + ", x: "+ data_hist + ",\ntype: 'histogram'};\n" +
+  "plotDatas.push(trace1);";
+*/
+
+
+
+  str += '\nlayout.xaxis.title = labels[' + hist_val[0] + '][' + hist_val[1] + '];\n';
+  str += '\nlayout.xaxis.autorange = ' + x_range_bool + ';\n';
+  str += '\nlayout.xaxis.range = [' + value_hist_low + ',' + value_hist_high + '];\n';
+  str += 'layout.title = titles[' + hist_val[0] + ']\n';
+  var code = str;
+  return value_hist_low;
+};
+
+Blockly.JavaScript['scatter_r'] = function(block) {
+  var value_x_input = Blockly.JavaScript.valueToCode(block, 'x_input', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y_input = Blockly.JavaScript.valueToCode(block, 'y_input', Blockly.JavaScript.ORDER_ATOMIC);
+  //var value_r_input = Blockly.JavaScript.valueToCode(block, 'r_input', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+
+  var str = '';
+  var trace1 = {};
+
+  //value_x_input から datas[i][j] の文字列を生成
+  var x_val = value_x_input.slice(1,-1);
+  x_val = x_val.split(',');
+  var data_x = "datas_extracted[" + x_val[0] + "][" + x_val[1] + "]";
+  var y_val = value_y_input.slice(1,-1);
+  y_val = y_val.split(',');
+  var data_y = "datas_extracted[" + y_val[0] + "][" + y_val[1] + "]";
+
+
+  str = "trace1 = {x: " + data_x + ", y: " + data_y +
+    ",\ntype: 'scatter', mode: 'markers'};\n" +
+    "plotDatas.push(trace1);";
+
+  var r = 'R_csv('+ data_x+','+ data_y +')';
+
+  str += '\nlayout.xaxis.title = labels[' + x_val[0] + '][' + x_val[1] + ']';
+  str += '\nlayout.yaxis.title = labels[' + y_val[0] + '][' + y_val[1] + ']';
+  str += '\nlayout.title = titles[' + x_val[0] + '] + "  (R = " + ' + r + ' + ")"' ;
+  var code = str + '\n';
+  return code;
+};
+
+Blockly.JavaScript['hist_dropdown'] = function(block) {
+  var dropdown_a1 = block.getFieldValue('a1');
+  var value_s1 = Blockly.JavaScript.valueToCode(block, 's1', Blockly.JavaScript.ORDER_ATOMIC);
+  var number_d1 = block.getFieldValue('d1');
+  var value_s2 = Blockly.JavaScript.valueToCode(block, 's2', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = '...;\n';
+  return code;
+};
+
+Blockly.JavaScript['graph_plot'] = function (block)
+{
+  // TODO: Assemble JavaScript into code variable.
+  //  var code = "Plotly.newPlot('myPlotly', data_plotly);\ndata_plotly = []";
+  var code = "Plotly.newPlot('graph', plotDatas, layout);\n";
+  code = code + "plotDatas = [];\n";
+  return code;
+};
+
+Blockly.JavaScript['downloadgraph'] = function(block) {
+  var text_filename = block.getFieldValue('filename');
+  // TODO: Assemble JavaScript into code variable.
+  var code = "Plotly.downloadImage('graph', {format: 'png', width: 800, height: 600, filename:'"+
+        text_filename + "'});\n";
+  return code;
+};
+Blockly.JavaScript['downloadgraph_2'] = function(block) {
+  var value_name = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  console.log(value_name);
+  value_name.split
+  var code = "Plotly.newPlot('graph', plotDatas, layout);\n";
+  code += "plotDatas = [];\n";
+   code += "Plotly.downloadImage('graph', {format: 'png', width: 800, height: 600, filename:"+
+        value_name + "});\n";
+  return code;
+};
+
+Blockly.JavaScript['char_marge'] = function(block) {
+  var value_char1 = Blockly.JavaScript.valueToCode(block, 'char1', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_char2 = Blockly.JavaScript.valueToCode(block, 'char2', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_char3 = Blockly.JavaScript.valueToCode(block, 'char3', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  if(value_char1[0] === '\''){
+    //value_char1 = value_char1.slice(1,-1);
+  }
+  var str = value_char1 + " + " + value_char2 + " + " + value_char3;
+//  var code = "'"+ value_char1+"'" + value_char2 +value_char3 ;
+var code = str;
+// TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+
+function makeDatas(sheetCol){
+  var val = sheetCol.slice(1,-1);
+  val = val.split(',');
+  var data = "datas_extracted[" + val[0] + "][" + val[1] + "]";
+  return data;
+}

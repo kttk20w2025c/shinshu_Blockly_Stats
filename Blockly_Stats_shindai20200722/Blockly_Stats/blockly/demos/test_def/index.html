@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blockly Stats : ブロックリースタッツ by 信州大学工学部香山研究室</title>
+
+  <script src="../../../jquery/jquery-3.3.1.min.js"></script>
+ 
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+  <script src="../../blockly_compressed.js"></script>
+  <script src="../../blocks_compressed.js"></script>
+  <script src="../../javascript_compressed.js"></script>
+  <script src="../../msg/js/en.js"></script>
+  <script src="../../blocks/custom.js"></script>
+  <script src="../../generators/javascript/custom.js"></script>
+  <script src="../../blocks/range_json.js"></script>
+  <script src="../../blocks/graph.js"></script>
+  <script src="../../generators/javascript/graph.js"></script>
+  <script src="../../blocks/define.js"></script>
+  <script src="../../generators/javascript/define.js"></script>
+  <script src="../../appengine/storage.js"></script>
+
+  <script src="../../../js/plotly-latest.min.js"></script>
+</head>
+
+<body>
+
+  <header style="background-color:gray">Header</header>
+  <div class="container-fluid">
+
+    <!--    <div class="col-sm-12" style="background-color: #FFCCCC;">-->
+    <div class="col-sm-12" id="graph"></div>
+  </div>
+
+  <div class="row">
+    <!--    <div class="col-sm-6" style="background-color: #CCFFCC;">-->
+      <div class="col-sm-6">
+          <!--      <button type="button" class="btn btn-default" onclick="showCode()">Show JavaScript</button>-->
+          <button type="button" class="btn btn-default" onclick="save1()">プログラム保存</button>
+          <button type="button" class="btn btn-default" onclick="load1()">プログラム読込</button>
+          <p style="display:inline">　　　　　　　　　　　　　　　　　　　　</p>
+          <!-- <button type="button" class="btn btn-default" onclick="showCode()">コード</button>
+    　　　-->
+          <button type="button" class="btn btn-default" onclick="runCode()">プログラム実行</button>
+
+          <input type="file" accept=".csv" id="fileselect" style="display: none"></input>
+          <div id="blocklyDiv" style="height: 700px; width: 750px;"></div>
+      </div>
+
+    <div class="col-sm-6">
+      <div class="container">
+        <ul class="nav nav-tabs" id="tabs" role="tablist">
+          <!--
+              <li>
+               <a href="#tab1" role="tab" data-toggle="tab">
+                 Tab 1&nbsp;
+                 <button type="button" class="close" aria-label="Close" title="タブを閉じる">
+                   <span aria-hidden="true">&#215;</span>
+                   <span class="sr-only">タブを閉じる</span>
+                 </button>
+               </a>
+             </li>
+              -->
+          <li id="tab-add">
+            <a href="#tab-add-content" role="tab" title="タブを追加">
+              <span class="glyphicon glyphicon-plus"></span>
+              <span class="sr-only">タブを追加</span>
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <!--
+              <div class="tab-pane" id="tab1">tab1 content</div>
+              -->
+          <div class="tab-pane active" id="tab-add-content">
+            ↑「 <span class="glyphicon glyphicon-plus"></span> 」アイコンをクリックしてCSVファイルを追加してください
+          </div>
+        </div>
+      </div><!-- /.container -->
+
+    </div>
+  </div>
+  </div>
+  <footer style="background-color:gray">Footer</footer>
+
+  <xml id="toolbox" style="display: none">
+    <category name="条件判断" colour="%{BKY_LOGIC_HUE}">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+    </category>
+    <category name="繰返処理" colour="%{BKY_LOOPS_HUE}">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+    </category>
+    <category name="数値計算" colour="%{BKY_MATH_HUE}">
+      <block type="math_number">
+        <field name="NUM">123</field>
+      </block>
+      <block type="math_arithmetic"></block>
+      <block type="math_single"></block>
+    </category>
+    <category name="文字列" colour="%{BKY_TEXTS_HUE}">
+      <block type="text"></block>
+      <block type="text_length"></block>
+      <block type="text_print"></block>
+    </category>
+    <category name="統計" colour="%{BKY_TEXTS_HUE}">
+      <block type="column"></block>
+      <block type="sheet_col"></block>
+      <block type="sheet_col_2">
+        <value name="sheetNum">
+          <block type="math_number">
+            <field name="NUM">0</field>
+        </value>
+        <value name="colNum">
+          <block type="math_number">
+            <field name="NUM">1</field>
+        </value>
+      </block>
+      <block type="averave_column"></block>
+      <block type="max_column"></block>
+      <block type="min_column"></block>
+      <block type="mean_column"></block>
+      <block type="mode_column"></block>
+      <block type="variance_column"></block>
+      <block type="stdev_column"></block>
+      <block type="r_column"></block>
+    </category>
+    <category name="定義" colour="%{BKY_TEXTS_HUE}">
+      <block type="def_name"></block>
+      <block type="def_condition"></block>
+      <block type="def_expression"></block>
+      <block type="def_comb"></block>
+      <block type="def_column"></block>
+    </category>
+    <category name="グラフ" colour="%{BKY_TEXTS_HUE}">
+      <block type="graph_set"></block>
+      <block type="histogram"></block>
+      <block type="scatter_r"></block>
+      <block type="hist_dropdown"></block>
+      <block type="graph_plot"></block>
+      <block type="downloadgraph"></block>
+      <block type="downloadgraph_2">
+        <value name="NAME">
+          <block type="text">
+            <field name="TEXT">ファイルの名前</field>
+          </block>
+        </value>
+      </block>
+      <block type="char_marge"></block>
+    </category>
+    <category name="変数" custom="VARIABLE" colour="%{BKY_VARIABLES_HUE}"></category>
+  </xml>
+
+  <xml id="startBlocks" style="display: none">
+    <block type="graph_set" inline="false" x="20" y="20">
+      <field name="graphType">graph_scatter</field>
+      <value name="x_input">
+        <block type="sheet_col_2">
+          <value name="sheetNum">
+            <block type="math_number"></block>
+          </value>
+          <value name="colNum">
+            <block type="math_number"></block>
+          </value>
+        </block>
+      </value>
+      <value name="y_input">
+        <block type="sheet_col_2">
+          <value name="sheetNum">
+            <block type="math_number"></block>
+          </value>
+          <value name="colNum">
+            <block type="math_number">
+              <field name="NUM">1</field>
+            </block>
+          </value>
+        </block>
+      </value>
+      <next>
+        <block type="downloadgraph_2">
+          <value name="NAME">
+            <block type="text">
+              <field name="TEXT">ファイルの名前</field>
+            </block>
+          </value>
+        </block>
+        <!--<block type="graph_plot" id="b3h($Wl?dP#pC~(=5vqv"></block> -->
+      </next>
+
+    </block>
+  </xml>
+
+</body>
+
+</html>
+<!--<script src="def.js"></script>-->
+<script src="test_def.js"></script>
